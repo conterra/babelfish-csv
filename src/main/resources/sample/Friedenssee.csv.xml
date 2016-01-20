@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+     <description>Friedenssee im Friedenspark (Münster)</description>
+     <copyright>© con terra - Gesellschaft für Angewandte Informationstechnologie mbH &amp; the OpenStreetMap contributors</copyright>
+     <ignoreFirstRow>true</ignoreFirstRow>
+     <geoType>polygon</geoType>
+     <columns>
+          <group>3</group>
+     </columns>
+     <style>
+          <line>
+			<color>255,255,0</color>
+			<stroke>2</stroke>
+		  </line>
+		  <fillColor>0,0,255</fillColor>
+		  <pointImage>iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAElklEQVR42q2VaUycVRSGWYS2phZsKq0QNVqj1lRNY5rYxERNNOkPNW5/TPqjGg0/1MYFmmBoJWkMarRUGk3AlH2ZGZZZmQVmX5hhmRlmY2aAAekAwwcMOwYx8nru17ExRsMM9CZv7rfd+5z33PPdm5aWRBOJRDkul+v9ycnJupmZmIGkp+tap9N5XiqV3pO210aATI/HU8Rx3PL6+gZWV9ewsrKK5ZUVXuw+FuMWKYgLZWVlGbuCKJXKfcOhkGRxcQkLC3EsL69gbX0dGxsbWKeeARficcxyHObnFxAIBIRVVVVZKYO8Xn8tm4Tj5sBga2vr2NzcxNbWFvW/gzlcWlrG3Nw8pqamMT09A7fb/XNKEIPBcHbyZhRRmoCjidiEzMlsPAJ7SAirvwVRboR3OUduGGR84leMj09s09gXk3fj85ki4xOIRqd4R/HFOKQDpfhe9Swq9E/jsjwfH9XkoqbnMwqEw9T0NA8KhUfhcg2pk4JQFR31+wN/jo5FwFzFYrPQeMshDZ2DM/4NdLEP0BA+hW97j+FjQTYElsu4SQGNRcYRDIbhHvL8IRaLc3cEaTSaVwKBIMIjo3yUk9EJ/OI+Bft8KQaWv0YP9x4EkefwQ38BirsOoKjzPkQmIhgZHYOfxg15vFCpVM/vCNJqDe94vD4MB0NgrryjZlR5T0ARfQvq2LuQTb2KuvBJfEeOvpDvw+ey/XAHLQiGwqACwqDTDQr2tR1BarX6rNM1BK8vcGtw2IFrfY/hRuAp1BPgRvAJ/Dj4IL7S5eKCOBOXNPfDM9wPnz8Al9uDvv5B0BwvJ7NG+XZH3zYbxGDMWYXpDK6YjvDrUm7NwyVtDj6VZuFLZR6qbW/wEFob9A84YbH2gv7B40kVhNFksrPImDOWRqtHiovyw5SmbB7wCTkpVeXjp96XYPcqeScMYuvtg05vnACQnhSIrL/NInP0DWBg0HVrIr8OtY5zKNedxHXbC5D4LmIwYOTXxEFBWXsdMJosVAia4qT/IxZRj1anN1lsFKUDdgL2DwzyQPavMDG3LBCbvQ9mSy8MRjM03Tof27pS2h0UCsUjPVr9qp4mMJmtMJNDi80Oq81BsvNrYTLbeIBWb4S6W7tCY07samPt6lKdV2u06NbqodUZWP6hM5j4XqszggIhF1ooVd3bcrn8zT0dFXKFslPRpUaXSgOluvu22L1CqYZMoYRMpqjY85lEkRaIJbJVsUQOiVRxW2KpHJ1iGUk6Qt/cnXYnWodYXCoQdUDYxtTJ9+xeIGxHfX0TSxkrAHYWZZLS/6WUTtqDLa0irrG5FY3NArC+oYmuG5tN9PoI6V4SO9KZs+z/AKYAa28vbmoR4m81twq3S0pKXqdXBaSjCSDbtQ+SDiQcZqQMqqysPCQUdcy3UroEonbUNTSZ6fGjpIdJD5DySXmkw6RDCdhdKYPYgFZh25W2DgmYioqKPqRnT5IeJx1PwPISkP3/SF/qrba29hhV228CUdt4VlbWaXr0TALE0peTKIqMO1GA6Z2dkpqrV69dT0AeSgCydh39/7Xq6urThYWFZxILn/Qa/AXMpJ+y0rqKwwAAAABJRU5ErkJggg==</pointImage>
+     </style>
+</config>
