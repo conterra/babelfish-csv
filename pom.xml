@@ -188,7 +188,6 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${plugin.javadoc.version}</version>
 					<configuration>
-						<!-- <additionalparam>-Xdoclint:none</additionalparam> -->
 						<links>
 							<link>http://logging.apache.org/log4j/1.2/apidocs</link>
 							<link>http://www.slf4j.org/api</link>
