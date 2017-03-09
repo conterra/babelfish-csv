@@ -1,300 +1,242 @@
 package de.conterra.babelfish.csv.layers;
 
-import java.awt.Image;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-import org.geotools.geometry.GeneralDirectPosition;
-import org.opengis.referencing.FactoryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.conterra.babelfish.csv.CsvConfig;
 import de.conterra.babelfish.csv.SimpleField;
 import de.conterra.babelfish.plugin.ServiceContainer;
-import de.conterra.babelfish.plugin.v10_02.feature.FeatureLayer;
-import de.conterra.babelfish.plugin.v10_02.feature.Field;
-import de.conterra.babelfish.plugin.v10_02.feature.FieldType;
-import de.conterra.babelfish.plugin.v10_02.feature.PopupType;
-import de.conterra.babelfish.plugin.v10_02.feature.Query;
-import de.conterra.babelfish.plugin.v10_02.feature.Template;
-import de.conterra.babelfish.plugin.v10_02.feature.Type;
+import de.conterra.babelfish.plugin.v10_02.feature.*;
 import de.conterra.babelfish.plugin.v10_02.feature.wrapper.LayerWrapper;
 import de.conterra.babelfish.plugin.v10_02.object.feature.FeatureObject;
 import de.conterra.babelfish.plugin.v10_02.object.feature.GeometryFeatureObject;
 import de.conterra.babelfish.plugin.v10_02.object.geometry.GeometryObject;
 import de.conterra.babelfish.plugin.v10_02.object.labeling.LabelingInfo;
 import de.conterra.babelfish.util.GeoUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+import org.geotools.geometry.GeneralDirectPosition;
+import org.opengis.referencing.FactoryException;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
 
 /**
- * defines {@link FeatureLayer} with represents the content of a CSV
- * {@link File}
- * 
- * @version 0.2.4
- * @author chwe
- * @since 0.1
- * 
+ * defines {@link FeatureLayer} with represents the content of a CSV {@link File}
+ *
  * @param <G> the geometry type
  * @param <F> the {@link FeatureObject} type
+ * @author ChrissW-R1
+ * @version 0.4.0
+ * @since 0.1.0
  */
+@Slf4j
 public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatureObject<G>>
-implements FeatureLayer<G, F>
-{
-	/**
-	 * the {@link Logger} of this class
-	 * 
-	 * @since 0.1
-	 */
-	public static final Logger LOGGER = LoggerFactory.getLogger(CsvLayer.class);
-	
+		implements FeatureLayer<G, F> {
 	/**
 	 * the unique identifier
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 0.1.0
 	 */
 	private final int id;
 	/**
 	 * the {@link File} to get the CSV data from
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 0.1.0
 	 */
 	private final File file;
 	/**
 	 * the configuration (loaded from configuration file)
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 0.1.0
 	 */
 	private final CsvConfig config;
 	/**
 	 * header fields (from column headers)
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 0.1.0
 	 */
 	private final Map<Integer, Field> headers = new HashMap<>();
 	
 	/**
 	 * constructor, with given id and {@link File}
-	 * 
-	 * @since 0.1
-	 * 
+	 *
 	 * @param file the {@link File} to parse the CSV data from
-	 * @param id the unique identifier
-	 * @throws IOException if no configuration could loaded
-	 * @throws IllegalArgumentException if the given {@link File} is a
-	 *         configuration {@link File} and no data {@link File}
+	 * @param id   the unique identifier
+	 * @throws IOException              if no configuration could loaded
+	 * @throws IllegalArgumentException if the given {@link File} is a configuration {@link File} and no data {@link File}
+	 * @since 0.1.0
 	 */
 	public CsvLayer(int id, File file)
-	throws IOException, IllegalArgumentException
-	{
+			throws IOException, IllegalArgumentException {
 		this.id = id;
 		this.file = file;
 		this.config = CsvConfig.getConfig(file);
 		
-		if (this.config.isIgnoreFirstRow())
-		{
+		if (this.config.isIgnoreFirstRow()) {
 			Reader reader = null;
 			
-			try
-			{
+			try {
 				reader = new FileReader(this.file);
 				Iterator<CSVRecord> records = CSVFormat.EXCEL.parse(reader).iterator();
 				
-				if (records.hasNext())
-				{
+				if (records.hasNext()) {
 					CSVRecord record = records.next();
 					
 					int i = 0;
-					for (String header : record)
-					{
+					for (String header : record) {
 						if (i != this.config.getLongColumn()
-						&& i != this.config.getLatColumn()
-						&& i != this.config.getEleColumn()
-						&& i != this.config.getCrsColumn())
+								&& i != this.config.getLatColumn()
+								&& i != this.config.getEleColumn()
+								&& i != this.config.getCrsColumn())
 							this.headers.put(i, new SimpleField(header, FieldType.String, "", false, 32767, null));
 						
 						i++;
 					}
 				}
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 			}
 			
-			try
-			{
+			try {
 				reader.close();
-			}
-			catch (NullPointerException e)
-			{
-			}
-			catch (IOException e)
-			{
-				CsvLayer.LOGGER.warn("Couldn't close reader of file: " + file.getName(), e);
+			} catch (NullPointerException e) {
+			} catch (IOException e) {
+				log.warn("Couldn't close reader of file: " + file.getName(), e);
 			}
 		}
 	}
 	
 	@Override
-	public int getId()
-	{
+	public int getId() {
 		return this.id;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return ServiceContainer.toUrlSaveString(this.file.getName());
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription() {
 		return this.getConfig().getDescription();
 	}
 	
 	@Override
-	public String getCopyrightText()
-	{
+	public String getCopyrightText() {
 		return this.getConfig().getCopyright();
 	}
 	
 	@Override
-	public PopupType getPopupType()
-	{
+	public PopupType getPopupType() {
 		return PopupType.HtmlText;
 	}
 	
 	@Override
-	public Field getObjectIdField()
-	{
+	public Field getObjectIdField() {
 		return null;
 	}
 	
 	@Override
-	public Field getGlobalIdField()
-	{
+	public Field getGlobalIdField() {
 		return null;
 	}
 	
 	@Override
-	public Field getDisplayField()
-	{
+	public Field getDisplayField() {
 		return SimpleField.DISPLAY_FIELD;
 	}
 	
 	@Override
-	public Field getTypeIdField()
-	{
+	public Field getTypeIdField() {
 		return SimpleField.REQ_TYPE_FIELD;
 	}
 	
 	@Override
-	public Set<? extends Type<F>> getSubTypes()
-	{
+	public Set<? extends Type<F>> getSubTypes() {
 		return new HashSet<>();
 	}
 	
 	@Override
-	public Set<? extends Template<F>> getTemplates()
-	{
+	public Set<? extends Template<F>> getTemplates() {
 		return new HashSet<>();
 	}
 	
 	@Override
-	public Query<F> getQuery()
-	{
+	public Query<F> getQuery() {
 		return null;
 	}
 	
 	@Override
-	public Map<? extends String, ? extends Image> getImages()
-	{
+	public Map<? extends String, ? extends Image> getImages() {
 		return new HashMap<>();
 	}
 	
 	@Override
-	public int getMinScale()
-	{
+	public int getMinScale() {
 		return 0;
 	}
 	
 	@Override
-	public int getMaxScale()
-	{
+	public int getMaxScale() {
 		return 0;
 	}
 	
 	@Override
-	public int getTranparency()
-	{
+	public int getTranparency() {
 		return 0;
 	}
 	
 	@Override
-	public LabelingInfo getLabelingInfo()
-	{
+	public LabelingInfo getLabelingInfo() {
 		return null;
 	}
 	
 	/**
 	 * gives the {@link File} to get the CSV data from
-	 * 
-	 * @since 0.1
-	 * 
+	 *
 	 * @return the {@link File} to get the CSV data from
+	 *
+	 * @since 0.1.0
 	 */
-	public File getFile()
-	{
+	public File getFile() {
 		return this.file;
 	}
 	
 	/**
 	 * gives the configuration
-	 * 
-	 * @since 0.1
-	 * 
+	 *
 	 * @return the configuration
+	 *
+	 * @since 0.1.0
 	 */
-	public CsvConfig getConfig()
-	{
+	public CsvConfig getConfig() {
 		return this.config;
 	}
 	
 	/**
 	 * gives a {@link Map} of header fields (from column headers)
-	 * 
-	 * @since 0.1
-	 * 
+	 *
 	 * @return a {@link Map} of header fields (from column headers)
+	 *
+	 * @since 0.1.0
 	 */
-	public Map<Integer, Field> getHeaders()
-	{
+	public Map<Integer, Field> getHeaders() {
 		return this.headers;
 	}
 	
 	/**
 	 * extracts a {@link GeneralDirectPosition} from a given {@link CSVRecord}
-	 * 
-	 * @since 0.1
-	 * 
-	 * @param record the {@link CSVRecord} to get the
-	 *        {@link GeneralDirectPosition} from
+	 *
+	 * @param record the {@link CSVRecord} to get the {@link GeneralDirectPosition} from
 	 * @return the extracted {@link GeneralDirectPosition}
-	 * @throws FactoryException if the CRS could decoded from the
-	 *         {@link CSVRecord}
+	 *
+	 * @throws FactoryException if the CRS could decoded from the {@link CSVRecord}
+	 * @since 0.1.0
 	 */
 	public GeneralDirectPosition getPositionFromRecord(CSVRecord record)
-	throws FactoryException
-	{
+			throws FactoryException {
 		CsvConfig config = this.getConfig();
 		
 		GeneralDirectPosition position = new GeneralDirectPosition(GeoUtils.decodeCrs(record.get(config.getCrsColumn())));
@@ -310,37 +252,29 @@ implements FeatureLayer<G, F>
 	
 	/**
 	 * adds all meta attributes to a {@link GeometryFeatureObject}
-	 * 
-	 * @since 0.1
-	 * 
-	 * @param <T> the geometry type
+	 *
+	 * @param <T>     the geometry type
 	 * @param feature the {@link GeometryFeatureObject} to add the attributes to
-	 * @param record the {@link CSVRecord} to get the attribute values from
+	 * @param record  the {@link CSVRecord} to get the attribute values from
 	 * @return the same {@link GeometryFeatureObject} with the added attributes
+	 *
+	 * @since 0.1.0
 	 */
-	public <T extends GeometryObject> GeometryFeatureObject<T> addAttributes(GeometryFeatureObject<T> feature, CSVRecord record)
-	{
+	public <T extends GeometryObject> GeometryFeatureObject<T> addAttributes(GeometryFeatureObject<T> feature, CSVRecord record) {
 		int idColumn = this.getConfig().getIdColumn();
 		
 		int i = 0;
-		for (String cell : record)
-		{
-			if (idColumn != i)
-			{
+		for (String cell : record) {
+			if (idColumn != i) {
 				Field field = this.getHeaders().get(i);
 				
 				if (field != null)
 					feature.addAttribute(field, cell);
-			}
-			else
-			{
-				try
-				{
+			} else {
+				try {
 					feature.addAttribute(LayerWrapper.DEFAULT_OBJECT_ID_FIELD, Integer.parseInt(cell));
-				}
-				catch (NumberFormatException e)
-				{
-					CsvLayer.LOGGER.warn("Found a not valid object ID (" + cell + ") in column: " + idColumn, e);
+				} catch (NumberFormatException e) {
+					log.warn("Found a not valid object ID (" + cell + ") in column: " + idColumn, e);
 				}
 			}
 			
