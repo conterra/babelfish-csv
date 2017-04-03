@@ -51,10 +51,11 @@ public class SimpleFeature<T extends FeatureObject>
 	public SimplePopup getPopup() {
 		T feature = this.getFeature();
 		
-		Map<? extends Field, ? extends Object> attr = feature.getAttributes();
-		Map<String, String> attrString = new LinkedHashMap<>();
-		for (Field key : attr.keySet())
+		Map<? extends Field, ?> attr       = feature.getAttributes();
+		Map<String, String>     attrString = new LinkedHashMap<>();
+		for (Field key : attr.keySet()) {
 			attrString.put(key.getName(), attr.get(key).toString());
+		}
 		
 		return new SimplePopup(feature.toString(), attrString);
 	}

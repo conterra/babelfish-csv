@@ -42,7 +42,7 @@ public abstract class CsvGroupedLayer<G extends GeometryObject, F extends Geomet
 	 * @since 0.1.0
 	 */
 	public CsvGroupedLayer(int id, File file)
-			throws IOException, IllegalArgumentException {
+	throws IOException, IllegalArgumentException {
 		super(id, file);
 	}
 	
@@ -56,34 +56,38 @@ public abstract class CsvGroupedLayer<G extends GeometryObject, F extends Geomet
 	public Set<? extends Group> getGroups() {
 		Set<Group> result = new LinkedHashSet<>();
 		
-		Map<String, Set<GeometryFeatureObject<Point>>> groups = new HashMap<>();
-		File file = this.getFile();
-		String fileName = file.getName();
-		CsvConfig config = this.getConfig();
+		Map<String, Set<GeometryFeatureObject<Point>>> groups   = new HashMap<>();
+		File                                           file     = this.getFile();
+		String                                         fileName = file.getName();
+		CsvConfig                                      config   = this.getConfig();
 		
 		Reader reader = null;
 		try {
 			reader = new FileReader(file);
 			Iterator<CSVRecord> records = CSVFormat.EXCEL.parse(reader).iterator();
 			
-			if (config.isIgnoreFirstRow() && records.hasNext())
+			if (config.isIgnoreFirstRow() && records.hasNext()) {
 				records.next();
+			}
 			
 			while (records.hasNext()) {
 				CSVRecord record = records.next();
-				String group = "";
+				String    group  = "";
 				
-				for (int col : config.getGroupColumn())
+				for (int col : config.getGroupColumn()) {
 					group += record.get(col) + ",";
+				}
 				
-				while (group.endsWith(","))
+				while (group.endsWith(",")) {
 					group = group.substring(0, group.length() - 1);
+				}
 				
 				Set<GeometryFeatureObject<Point>> groupSet;
-				if (groups.containsKey(group))
+				if (groups.containsKey(group)) {
 					groupSet = groups.get(group);
-				else
+				} else {
 					groupSet = new LinkedHashSet<>();
+				}
 				
 				try {
 					groupSet.add(this.addAttributes(new GeometryFeatureObject<Point>(new Point(new PointImpl(this.getPositionFromRecord(record)))), record));
@@ -107,15 +111,15 @@ public abstract class CsvGroupedLayer<G extends GeometryObject, F extends Geomet
 		}
 		
 		for (String group : groups.keySet()) {
-			Set<org.opengis.geometry.primitive.Point> points = new LinkedHashSet<>();
-			Map<Field, Set<String>> attributes = new HashMap<>();
-			CoordinateReferenceSystem crs = null;
+			Set<org.opengis.geometry.primitive.Point> points     = new LinkedHashSet<>();
+			Map<Field, Set<String>>                   attributes = new HashMap<>();
+			CoordinateReferenceSystem                 crs        = null;
 			
 			for (GeometryFeatureObject<Point> feature : groups.get(group)) {
 				Point point = feature.getGeometry();
 				points.add(point);
 				
-				Map<? extends Field, ? extends Object> attrs = feature.getAttributes();
+				Map<? extends Field, ?> attrs = feature.getAttributes();
 				for (Field field : attrs.keySet()) {
 					Object obj = attrs.get(field);
 					if (obj != null && obj instanceof String) {
@@ -124,10 +128,11 @@ public abstract class CsvGroupedLayer<G extends GeometryObject, F extends Geomet
 						if (!(attr.isEmpty())) {
 							Set<String> set;
 							
-							if (attributes.containsKey(field))
+							if (attributes.containsKey(field)) {
 								set = attributes.get(field);
-							else
+							} else {
 								set = new LinkedHashSet<>();
+							}
 							
 							set.add(attr);
 							
@@ -138,27 +143,31 @@ public abstract class CsvGroupedLayer<G extends GeometryObject, F extends Geomet
 				
 				if (crs == null) {
 					CoordinateReferenceSystem pointCrs = point.getCoordinateReferenceSystem();
-					if (pointCrs != null)
+					if (pointCrs != null) {
 						crs = pointCrs;
+					}
 				}
 			}
 			
 			Map<Field, String> attrMap = new HashMap<>();
 			for (Field field : attributes.keySet()) {
 				String attrValue = "";
-				for (String attr : attributes.get(field))
+				for (String attr : attributes.get(field)) {
 					attrValue += attr + Group.DELIMITER;
+				}
 				
-				while (attrValue.endsWith(Group.DELIMITER))
+				while (attrValue.endsWith(Group.DELIMITER)) {
 					attrValue = attrValue.substring(0, attrValue.length() - Group.DELIMITER.length());
+				}
 				
 				attrMap.put(field, attrValue);
 			}
 			
-			if (crs != null)
+			if (crs != null) {
 				result.add(new Group(points, attrMap, crs));
-			else
+			} else {
 				log.warn("Couldn't create group, because no valid CRS was found!");
+			}
 		}
 		
 		return result;
