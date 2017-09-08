@@ -30,10 +30,10 @@
 		
 		<lombok.version>1.16.18</lombok.version>
 		<slf4j.version>1.7.25</slf4j.version>
-		<babelfish.version>0.4.0-SNAPSHOT</babelfish.version>
 		<geotools.version>17.2</geotools.version>
-		<commonscsv.version>1.4</commonscsv.version>
 		<jdom.version>2.0.6</jdom.version>
+		<babelfish.version>0.4.0-SNAPSHOT</babelfish.version>
+		<commonscsv.version>1.4</commonscsv.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>2.8.47</mockito.version>
 		
@@ -60,12 +60,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>de.conterra</groupId>
-			<artifactId>babelfish-api</artifactId>
-			<version>${babelfish.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-opengis</artifactId>
 			<version>${geotools.version}</version>
@@ -75,6 +69,12 @@
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom2</artifactId>
 			<version>${jdom.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.conterra</groupId>
+			<artifactId>babelfish-api</artifactId>
+			<version>${babelfish.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -190,8 +190,8 @@
 							<link>https://projectlombok.org/api</link>
 							<link>https://www.slf4j.org/apidocs</link>
 							<link>http://docs.geotools.org/stable/javadocs</link>
-							<link>https://commons.apache.org/proper/commons-csv/archives/${commonscsv.version}/apidocs</link>
 							<link>http://www.jdom.org/docs/apidocs</link>
+							<link>https://commons.apache.org/proper/commons-csv/archives/${commonscsv.version}/apidocs</link>
 							<link>http://junit.org/junit4/javadoc/latest</link>
 							<link>https://static.javadoc.io/org.mockito/mockito-core/${mockito.version}</link>
 						</links>
