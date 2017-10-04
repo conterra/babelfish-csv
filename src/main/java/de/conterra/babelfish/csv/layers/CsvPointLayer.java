@@ -8,6 +8,7 @@ import de.conterra.babelfish.plugin.v10_02.object.geometry.Point;
 import de.conterra.babelfish.plugin.v10_02.object.renderer.RendererObject;
 import de.conterra.babelfish.plugin.v10_02.object.renderer.SimpleRenderer;
 import de.conterra.babelfish.plugin.v10_02.object.symbol.PictureMarkerSymbol;
+import de.conterra.babelfish.util.DataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -50,7 +51,7 @@ public class CsvPointLayer
 	 * @since 0.1.0
 	 */
 	public CsvPointLayer(int id, File file)
-			throws IOException, IllegalArgumentException {
+	throws IOException, IllegalArgumentException {
 		super(id, file);
 		
 		this.renderer = new SimpleRenderer(new PictureMarkerSymbol(this.getConfig().getPointImage()), "Content of " + this.getName());
@@ -70,7 +71,7 @@ public class CsvPointLayer
 	public Set<? extends Feature<GeometryFeatureObject<Point>>> getFeatures() {
 		Set<Feature<GeometryFeatureObject<Point>>> result = new LinkedHashSet<>();
 		
-		File file = this.getFile();
+		File   file     = this.getFile();
 		String fileName = file.getName();
 		
 		Reader reader = null;
@@ -78,8 +79,9 @@ public class CsvPointLayer
 			reader = new FileReader(file);
 			Iterator<CSVRecord> records = CSVFormat.EXCEL.parse(reader).iterator();
 			
-			if (this.getConfig().isIgnoreFirstRow() && records.hasNext())
+			if (this.getConfig().isIgnoreFirstRow() && records.hasNext()) {
 				records.next();
+			}
 			
 			while (records.hasNext()) {
 				CSVRecord record = records.next();
@@ -94,12 +96,7 @@ public class CsvPointLayer
 			log.error("An error occurred on reading the CSV file " + fileName + "!", e);
 		}
 		
-		try {
-			reader.close();
-		} catch (NullPointerException e) {
-		} catch (IOException e) {
-			log.warn("Couldn't close the reader of CSV file: " + fileName, e);
-		}
+		DataUtils.closeStream(reader);
 		
 		return result;
 	}

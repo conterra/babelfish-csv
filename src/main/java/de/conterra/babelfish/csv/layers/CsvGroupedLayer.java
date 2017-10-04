@@ -7,6 +7,7 @@ import de.conterra.babelfish.plugin.v10_02.object.feature.FeatureObject;
 import de.conterra.babelfish.plugin.v10_02.object.feature.GeometryFeatureObject;
 import de.conterra.babelfish.plugin.v10_02.object.geometry.GeometryObject;
 import de.conterra.babelfish.plugin.v10_02.object.geometry.Point;
+import de.conterra.babelfish.util.DataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -103,12 +104,7 @@ public abstract class CsvGroupedLayer<G extends GeometryObject, F extends Geomet
 			log.error("An error occurred on reading the CSV file " + fileName + "!", e);
 		}
 		
-		try {
-			reader.close();
-		} catch (NullPointerException e) {
-		} catch (IOException e) {
-			log.warn("Couldn't close the reader of CSV file: " + fileName, e);
-		}
+		DataUtils.closeStream(reader);
 		
 		for (String group : groups.keySet()) {
 			Set<org.opengis.geometry.primitive.Point> points     = new LinkedHashSet<>();

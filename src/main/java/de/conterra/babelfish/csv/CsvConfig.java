@@ -50,79 +50,79 @@ public class CsvConfig {
 	 *
 	 * @since 0.1.0
 	 */
-	private String copyright = "";
+	private String                          copyright      = "";
 	/**
 	 * should the first row ignored, in case of headlines?
 	 *
 	 * @since 0.1.0
 	 */
-	private boolean ignoreFirstRow = true;
+	private boolean                         ignoreFirstRow = true;
 	/**
 	 * the {@link GeometryObject} type
 	 *
 	 * @since 0.1.0
 	 */
-	private Class<? extends GeometryObject> geoType = Point.class;
+	private Class<? extends GeometryObject> geoType        = Point.class;
 	/**
 	 * column, in which the longitude is stored
 	 *
 	 * @since 0.1.0
 	 */
-	private int longColumn = -1;
+	private int                             longColumn     = -1;
 	/**
 	 * column, in which the latitude is stored
 	 *
 	 * @since 0.1.0
 	 */
-	private int latColumn = -1;
+	private int                             latColumn      = -1;
 	/**
 	 * column, in which the elevation is stored
 	 *
 	 * @since 0.1.0
 	 */
-	private int eleColumn = -1;
+	private int                             eleColumn      = -1;
 	/**
 	 * column, in which the CRS is stored
 	 *
 	 * @since 0.1.0
 	 */
-	private int crsColumn = -1;
+	private int                             crsColumn      = -1;
 	/**
 	 * column, in which the object ID is stored
 	 *
 	 * @since 0.2.4
 	 */
-	private int idColumn = -1;
+	private int                             idColumn       = -1;
 	/**
 	 * columns, to group coordinates to {@link GeometryObject}s
 	 *
 	 * @since 0.1.0
 	 */
-	private int[] groupColumn = new int[0];
+	private int[]                           groupColumn    = new int[0];
 	/**
 	 * the {@link Color} to draw a line
 	 *
 	 * @since 0.1.0
 	 */
-	private Color lineColor = Color.BLACK;
+	private Color                           lineColor      = Color.BLACK;
 	/**
 	 * the stroke to draw a line
 	 *
 	 * @since 0.1.0
 	 */
-	private int lineStroke = 1;
+	private int                             lineStroke     = 1;
 	/**
 	 * the {@link Color}, to fill {@link Polygon}s
 	 *
 	 * @since 0.1.0
 	 */
-	private Color fillColor = Color.BLUE;
+	private Color                           fillColor      = Color.BLUE;
 	/**
 	 * the {@link Image}, which should be used to draw {@link Point}s
 	 *
 	 * @since 0.1.0
 	 */
-	private Image pointImage = CsvConfig.DEFAULT_IMAGE;
+	private Image                           pointImage     = CsvConfig.DEFAULT_IMAGE;
 	
 	/**
 	 * standard constructor
@@ -141,30 +141,34 @@ public class CsvConfig {
 	 * @since 0.1.0
 	 */
 	private CsvConfig(File file)
-			throws IllegalArgumentException, IOException {
+	throws IllegalArgumentException, IOException {
 		this();
 		
 		String fileName = file.getName();
 		
-		if (!(file.exists()))
+		if (!(file.exists())) {
 			throw new IllegalArgumentException("Config file " + fileName + " doesn't exist!");
+		}
 		
 		try {
 			Element rootNode = (new SAXBuilder()).build(file).getRootElement();
 			
 			Element child = rootNode.getChild("description");
-			if (child != null)
+			if (child != null) {
 				this.description = child.getText();
-			else
+			} else {
 				this.description = fileName.substring(0, fileName.length() - ".xml".length());
+			}
 			
 			child = rootNode.getChild("copyright");
-			if (child != null)
+			if (child != null) {
 				this.copyright = child.getText();
+			}
 			
 			child = rootNode.getChild("ignoreFirstRow");
-			if (child != null)
+			if (child != null) {
 				this.ignoreFirstRow = Boolean.parseBoolean(child.getText());
+			}
 			
 			child = rootNode.getChild("geoType");
 			if (child != null) {
@@ -175,14 +179,15 @@ public class CsvConfig {
 					Class<? extends GeometryObject> clazz = (Class<? extends GeometryObject>) Class.forName(type);
 					this.geoType = clazz;
 				} catch (ClassNotFoundException | ClassCastException e) {
-					if (type.equalsIgnoreCase("Polygon") || type.equalsIgnoreCase("Poly"))
+					if (type.equalsIgnoreCase("Polygon") || type.equalsIgnoreCase("Poly")) {
 						this.geoType = Polygon.class;
-					else if (type.equalsIgnoreCase("Polyline") || type.equalsIgnoreCase("Line"))
+					} else if (type.equalsIgnoreCase("Polyline") || type.equalsIgnoreCase("Line")) {
 						this.geoType = Polyline.class;
-					else if (type.equalsIgnoreCase("MultiPoint"))
+					} else if (type.equalsIgnoreCase("MultiPoint")) {
 						this.geoType = Multipoint.class;
-					else
+					} else {
 						this.geoType = Point.class;
+					}
 				}
 			}
 			
@@ -190,36 +195,41 @@ public class CsvConfig {
 			if (child != null) {
 				Element child2 = child.getChild("long");
 				try {
-					if (child2 != null)
+					if (child2 != null) {
 						this.longColumn = Integer.parseInt(child2.getText());
+					}
 				} catch (NumberFormatException e) {
 				}
 				
 				child2 = child.getChild("lat");
 				try {
-					if (child2 != null)
+					if (child2 != null) {
 						this.latColumn = Integer.parseInt(child2.getText());
+					}
 				} catch (NumberFormatException e) {
 				}
 				
 				child2 = child.getChild("ele");
 				try {
-					if (child2 != null)
+					if (child2 != null) {
 						this.eleColumn = Integer.parseInt(child2.getText());
+					}
 				} catch (NumberFormatException e) {
 				}
 				
 				child2 = child.getChild("crs");
 				try {
-					if (child2 != null)
+					if (child2 != null) {
 						this.crsColumn = Integer.parseInt(child2.getText());
+					}
 				} catch (NumberFormatException e) {
 				}
 				
 				child2 = child.getChild("objectId");
 				try {
-					if (child2 != null)
+					if (child2 != null) {
 						this.idColumn = Integer.parseInt(child2.getText());
+					}
 				} catch (NumberFormatException e) {
 				}
 				
@@ -248,10 +258,11 @@ public class CsvConfig {
 						try {
 							Color color = CsvConfig.getColor(child3.getText());
 							
-							if (color != null)
+							if (color != null) {
 								this.lineColor = color;
-							else
+							} else {
 								log.warn("Wrong syntax of the line color tag was used! E.g.: 'RED,GREEN,BLUE,ALPHA'");
+							}
 						} catch (NumberFormatException e) {
 							log.warn("Couldn't parse color numbers for line color!", e);
 						}
@@ -271,10 +282,11 @@ public class CsvConfig {
 				if (child2 != null) {
 					Color color = CsvConfig.getColor(child2.getText());
 					
-					if (color != null)
+					if (color != null) {
 						this.fillColor = color;
-					else
+					} else {
 						log.warn("Wrong syntax of the fill color tag was used! E.g.: 'RED,GREEN,BLUE,ALPHA'");
+					}
 				}
 				
 				child2 = child.getChild("pointImage");
@@ -451,15 +463,16 @@ public class CsvConfig {
 	 * @since 0.1.0
 	 */
 	private static Color getColor(String text)
-			throws NumberFormatException {
+	throws NumberFormatException {
 		String[] colors = text.split(",");
 		if (colors.length >= 3) {
 			int alpha;
 			
-			if (colors.length >= 4)
+			if (colors.length >= 4) {
 				alpha = Integer.parseInt(colors[3]);
-			else
+			} else {
 				alpha = 255;
+			}
 			
 			return new Color(Integer.parseInt(colors[0]), Integer.parseInt(colors[1]), Integer.parseInt(colors[2]), alpha);
 		}
@@ -477,8 +490,8 @@ public class CsvConfig {
 	 * @since 0.1.0
 	 */
 	public static CsvConfig getConfig(File file)
-			throws IOException {
-		String fileName = file.getName();
+	throws IOException {
+		String fileName  = file.getName();
 		String extension = ".xml";
 		if (!(fileName.endsWith(extension))) {
 			File configFile = new File(file.getAbsoluteFile() + extension);
@@ -502,7 +515,7 @@ public class CsvConfig {
 				int lat = config.getLatColumn();
 				int ele = config.getEleColumn();
 				int crs = config.getCrsColumn();
-				int id = config.getIdColumn();
+				int id  = config.getIdColumn();
 				
 				reader = new FileReader(file);
 				Iterator<CSVRecord> records = CSVFormat.EXCEL.parse(reader).iterator();
@@ -513,24 +526,26 @@ public class CsvConfig {
 					int i = 0;
 					for (String header : record) {
 						if (i != lon && i != lat && i != ele && i != crs && i != id) {
-							if (lon < 0 && (header.equalsIgnoreCase("long") || header.equalsIgnoreCase("lon") || header.equalsIgnoreCase("longitude") || header.equalsIgnoreCase("x")))
+							if (lon < 0 && (header.equalsIgnoreCase("long") || header.equalsIgnoreCase("lon") || header.equalsIgnoreCase("longitude") || header.equalsIgnoreCase("x"))) {
 								lon = i;
-							else if (lat < 0 && (header.equalsIgnoreCase("lat") || header.equalsIgnoreCase("latitude") || header.equalsIgnoreCase("y")))
+							} else if (lat < 0 && (header.equalsIgnoreCase("lat") || header.equalsIgnoreCase("latitude") || header.equalsIgnoreCase("y"))) {
 								lat = i;
-							else if (ele < 0 && (header.equalsIgnoreCase("ele") || header.equalsIgnoreCase("elevation") || header.equalsIgnoreCase("z")))
+							} else if (ele < 0 && (header.equalsIgnoreCase("ele") || header.equalsIgnoreCase("elevation") || header.equalsIgnoreCase("z"))) {
 								ele = i;
-							else if (crs < 0 && (header.equalsIgnoreCase("CRS") || header.equalsIgnoreCase("EPSG") || header.equalsIgnoreCase("SRS")))
+							} else if (crs < 0 && (header.equalsIgnoreCase("CRS") || header.equalsIgnoreCase("EPSG") || header.equalsIgnoreCase("SRS"))) {
 								crs = i;
-							else if (id < 0 && (header.equalsIgnoreCase("ID") || header.equalsIgnoreCase("ObjectID") || header.equalsIgnoreCase("UID")))
+							} else if (id < 0 && (header.equalsIgnoreCase("ID") || header.equalsIgnoreCase("ObjectID") || header.equalsIgnoreCase("UID"))) {
 								id = i;
+							}
 						}
 						
 						i++;
 					}
 				}
 				
-				if (lon < 0 || lat < 0 || crs < 0)
+				if (lon < 0 || lat < 0 || crs < 0) {
 					throw new IOException("A configuration file or column headers of coordinates and reference system are necessary!");
+				}
 				
 				config.longColumn = lon;
 				config.latColumn = lat;
@@ -542,13 +557,7 @@ public class CsvConfig {
 			} catch (IOException e) {
 				throw new IOException("Couldn't read column names from CSV file: " + fileName, e);
 			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						log.warn("Couldn't close reader of file: " + fileName, e);
-					}
-				}
+				DataUtils.closeStream(reader);
 			}
 		}
 		

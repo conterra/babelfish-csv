@@ -9,6 +9,7 @@ import de.conterra.babelfish.plugin.v10_02.object.feature.FeatureObject;
 import de.conterra.babelfish.plugin.v10_02.object.feature.GeometryFeatureObject;
 import de.conterra.babelfish.plugin.v10_02.object.geometry.GeometryObject;
 import de.conterra.babelfish.plugin.v10_02.object.labeling.LabelingInfo;
+import de.conterra.babelfish.util.DataUtils;
 import de.conterra.babelfish.util.GeoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
@@ -40,13 +41,13 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 	 *
 	 * @since 0.1.0
 	 */
-	private final int id;
+	private final int       id;
 	/**
 	 * the {@link File} to get the CSV data from
 	 *
 	 * @since 0.1.0
 	 */
-	private final File file;
+	private final File      file;
 	/**
 	 * the configuration (loaded from configuration file)
 	 *
@@ -70,7 +71,7 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 	 * @since 0.1.0
 	 */
 	public CsvLayer(int id, File file)
-			throws IOException, IllegalArgumentException {
+	throws IOException, IllegalArgumentException {
 		this.id = id;
 		this.file = file;
 		this.config = CsvConfig.getConfig(file);
@@ -88,10 +89,11 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 					int i = 0;
 					for (String header : record) {
 						if (i != this.config.getLongColumn()
-								&& i != this.config.getLatColumn()
-								&& i != this.config.getEleColumn()
-								&& i != this.config.getCrsColumn())
+						    && i != this.config.getLatColumn()
+						    && i != this.config.getEleColumn()
+						    && i != this.config.getCrsColumn()) {
 							this.headers.put(i, new SimpleField(header, FieldType.String, "", false, 32767, null));
+						}
 						
 						i++;
 					}
@@ -99,12 +101,7 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 			} catch (IOException e) {
 			}
 			
-			try {
-				reader.close();
-			} catch (NullPointerException e) {
-			} catch (IOException e) {
-				log.warn("Couldn't close reader of file: " + file.getName(), e);
-			}
+			DataUtils.closeStream(reader);
 		}
 	}
 	
@@ -236,7 +233,7 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 	 * @since 0.1.0
 	 */
 	public GeneralDirectPosition getPositionFromRecord(CSVRecord record)
-			throws FactoryException {
+	throws FactoryException {
 		CsvConfig config = this.getConfig();
 		
 		GeneralDirectPosition position = new GeneralDirectPosition(GeoUtils.decodeCrs(record.get(config.getCrsColumn())));
@@ -244,8 +241,9 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 		position.setOrdinate(1, Double.parseDouble(record.get(config.getLongColumn())));
 		
 		int z = config.getEleColumn();
-		if (z >= 0)
+		if (z >= 0) {
 			position.setOrdinate(2, Double.parseDouble(record.get(z)));
+		}
 		
 		return position;
 	}
@@ -268,8 +266,9 @@ public abstract class CsvLayer<G extends GeometryObject, F extends GeometryFeatu
 			if (idColumn != i) {
 				Field field = this.getHeaders().get(i);
 				
-				if (field != null)
+				if (field != null) {
 					feature.addAttribute(field, cell);
+				}
 			} else {
 				try {
 					feature.addAttribute(LayerWrapper.DEFAULT_OBJECT_ID_FIELD, Integer.parseInt(cell));

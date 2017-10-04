@@ -5,6 +5,7 @@ import de.conterra.babelfish.plugin.PluginAdapter;
 import de.conterra.babelfish.plugin.RestService;
 import de.conterra.babelfish.plugin.ServiceContainer;
 import de.conterra.babelfish.plugin.v10_02.feature.FeatureService;
+import de.conterra.babelfish.util.DataUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 
@@ -61,8 +62,9 @@ public class CsvPlugin
 					CSVFormat.EXCEL.parse(reader);
 					
 					try {
-						if (!(ServiceContainer.registerService(new CsvService(file))))
+						if (!(ServiceContainer.registerService(new CsvService(file)))) {
 							result = false;
+						}
 					} catch (IllegalArgumentException e) {
 						log.debug("Ignore the file " + fileName + ", because it is a config file and no CSV data file.", e);
 					} catch (IOException e) {
@@ -74,13 +76,7 @@ public class CsvPlugin
 					log.debug("The file " + fileName + " is not a valid CSV.", e);
 				}
 				
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						log.warn("Couldn't close reader of file: " + fileName, e);
-					}
-				}
+				DataUtils.closeStream(reader);
 			}
 		} catch (URISyntaxException e) {
 			String msg = "Exception occurred: " + e.getMessage();
@@ -96,8 +92,9 @@ public class CsvPlugin
 		boolean result = true;
 		
 		for (RestService service : ServiceContainer.getServices(this.getName())) {
-			if (!(ServiceContainer.unregisterService(service)))
+			if (!(ServiceContainer.unregisterService(service))) {
 				result = false;
+			}
 		}
 		
 		return result;
